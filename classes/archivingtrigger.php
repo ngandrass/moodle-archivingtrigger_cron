@@ -97,7 +97,7 @@ class archivingtrigger extends \local_archiving\driver\archivingtrigger {
         $jobsettings = $form->export_raw_data();
 
         // Create new archive job for course module.
-        $job = \local_archiving\archive_job::create($cm->context, get_admin()->id, $jobsettings);
+        $job = \local_archiving\archive_job::create($cm->context, get_admin()->id, 'cron', $jobsettings);
         $job->enqueue();
     }
 
