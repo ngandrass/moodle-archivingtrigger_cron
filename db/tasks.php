@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - https://moodle.org/
+// This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,24 +12,28 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here
+ * Task schedule configuration for the archivingtrigger_cron plugin.
  *
  * @package     archivingtrigger_cron
  * @copyright   2025 Niels Gandraß <niels@gandrass.de>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+// phpcs:ignore
 defined('MOODLE_INTERNAL') || die(); // @codeCoverageIgnore
 
-$plugin->component = 'archivingtrigger_cron';
-$plugin->release = '0.0.1';
-$plugin->version = 2025091002;
-$plugin->requires = 2024100700;
-$plugin->supported = [405, 500];
-$plugin->maturity = MATURITY_ALPHA;
-$plugin->dependencies = [
-    'local_archiving' => 2025081900,
+
+$tasks = [
+    [
+        'classname' => 'archivingtrigger_cron\task\trigger_archiving',
+        'blocking' => 0,
+        'minute' => '0',
+        'hour' => '0',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*',
+    ],
 ];

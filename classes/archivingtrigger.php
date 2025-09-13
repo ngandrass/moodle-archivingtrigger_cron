@@ -25,6 +25,8 @@
 
 namespace archivingtrigger_cron;
 
+use core_course_category;
+
 // @codingStandardsIgnoreFile
 defined('MOODLE_INTERNAL') || die(); // @codeCoverageIgnore
 
@@ -33,5 +35,70 @@ defined('MOODLE_INTERNAL') || die(); // @codeCoverageIgnore
  * Cron-based archiving trigger plugin
  */
 class archivingtrigger extends \local_archiving\driver\archivingtrigger {
+
+    /**
+     * @param bool $includeunchanged
+     * @return array
+     * @throws \core\exception\moodle_exception
+     * @throws \dml_exception
+     * @throws \moodle_exception
+     */
+    public function get_cms_to_archive(bool $includeunchanged = false): array {
+        $targetcatids = \local_archiving\util\course_util::get_archivable_course_category_ids();
+
+        $res = [];
+        foreach ($targetcatids as $catid) {
+            $cat = core_course_category::get($catid);
+            mtrace("↦ Course category: {$cat->get_formatted_name()} (ID: {$cat->id})");
+
+            $courses = $cat->get_courses();
+            foreach ($courses as $course) {
+                mtrace(" ↳ Course: {$course->get_formatted_name()} (ID: {$course->id})");
+                $cmsmeta = \local_archiving\util\mod_util::get_cms_with_metadata($course->id);
+
+                foreach($cmsmeta as $cmmeta) {
+                    $prettyname = "{$cmmeta->cm->name} (ID: {$cmmeta->cm->id})";
+                    if ($cmmeta->supported && $cmmeta->enabled && $cmmeta->ready) {
+                        if ($cmmeta->dirty) {
+                            mtrace("   ↳ ⏳ [ARCHIVE] {$prettyname}");
+                            $res[] = $cmmeta;
+                        } else if ($includeunchanged) {
+                            mtrace("   ↳ ⚠️ [FORCE] {$prettyname}");
+                            $res[] = $cmmeta;
+                        } else {
+                            mtrace("   ↳ ✅ [SKIP] {$prettyname}");
+                        }
+                    } else {
+                        mtrace("   ↳ ❌ [IGNORE] {$prettyname}");
+                    }
+                }
+            }
+        }
+
+        return $res;
+    }
+
+    /**
+     * Initiates a new archive job for the given course module using default values.
+     *
+     * @param \cm_info $cm Course module to archive
+     * @return void
+     * @throws \coding_exception
+     * @throws \dml_exception
+     * @throws \moodle_exception
+     */
+    public function create_archive_job(\cm_info $cm): void {
+        global $PAGE;
+        $PAGE->set_url('/');  // Set page URL to dummy value to prevent errors from mform.
+
+        // Get appropriate job create form and retrieve default settings.
+        $driver = \local_archiving\driver\factory::activity_archiving_driver($cm->modname, $cm->context);
+        $form = $driver->get_job_create_form($cm->modname, $cm);
+        $jobsettings = $form->export_raw_data();
+
+        // Create new archive job for course module.
+        $job = \local_archiving\archive_job::create($cm->context, get_admin()->id, $jobsettings);
+        $job->enqueue();
+    }
 
 }
