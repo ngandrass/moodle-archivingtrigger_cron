@@ -63,24 +63,33 @@ class trigger_archiving extends \core\task\scheduled_task {
 
         // Trigger archiving for all dirty course modules.
         $dryrun = get_config('archivingtrigger_cron', 'dryrun');
+        $createdjobsnum = 0;
         foreach ($cmstoarchivemeta as $cmmeta) {
             $course = $cmmeta->cm->get_course();
             $prettyname = "{$course->fullname} (ID: {$course->id}) > {$cmmeta->cm->name} (ID: {$cmmeta->cm->id})";
 
-            // Handle dry-run.
-            if ($dryrun) {
-                mtrace("→ [DRY-RUN] Would archive: {$prettyname}");
-                continue;
-            }
-
             // Handle actual archive job creation.
-            mtrace("→ Trigger archiving: {$prettyname}");
             try {
-                $trigger->create_archive_job($cmmeta->cm);
+                $driver = \local_archiving\driver\factory::activity_archiving_driver($cmmeta->cm->modname, $cmmeta->cm->context);
+                if ($driver->can_be_archived()) {
+                    // Handle dry-run.
+                    if ($dryrun) {
+                        mtrace("→ [DRY-RUN] Would archive: {$prettyname}");
+                        continue;
+                    }
+
+                    // Create the archive job.
+                    mtrace("→ Trigger archiving: {$prettyname}");
+                    $trigger->create_archive_job($cmmeta->cm);
+                    $createdjobsnum++;
+                } else {
+                    mtrace("→ Skipping activity since it is not ready for archiving: {$prettyname}");
+                }
             } catch (\Exception $e) {
                 mtrace("Failed to create archive job: {$e->getMessage()}");
             }
         }
+        mtrace("Created {$createdjobsnum} archive job(s)");
     }
 
 }
