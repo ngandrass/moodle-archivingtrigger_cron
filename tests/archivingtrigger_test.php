@@ -123,9 +123,9 @@ final class archivingtrigger_test extends \advanced_testcase {
      */
     public function test_create_archive_job(): void {
         global $DB;
+        $this->resetAfterTest();
 
         // Create a course with two quizzes.
-        $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $quiz1 = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
         $quiz2 = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
@@ -133,6 +133,9 @@ final class archivingtrigger_test extends \advanced_testcase {
         $courseinfo = get_fast_modinfo($course);
         $cminfo1 = $courseinfo->get_cm($quiz1->cmid);
         $cminfo2 = $courseinfo->get_cm($quiz2->cmid);
+
+        // Prepare all necessary job defaults for headless job creation to work.
+        set_config('job_preset_storage_driver', 'moodle', 'local_archiving');
 
         // Create two archive jobs.
         $trigger = new archivingtrigger();
