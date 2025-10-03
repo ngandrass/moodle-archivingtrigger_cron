@@ -26,6 +26,7 @@
 
 // Common
 $string['pluginname'] = 'Scheduled';
+$string['privacy:metadata'] = 'This archiving trigger plugin does not store any personal data.';
 
 // Settings.
 $string['setting_enabled'] = 'Enabled';
