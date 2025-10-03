@@ -45,6 +45,10 @@ class trigger_archiving extends \core\task\scheduled_task {
 
     /**
      * Triggers targeted activities to be archived.
+     *
+     * Note: We do not need to check if the trigger is disabled because all
+     * schedulde tasks are automatically disabled by Moodle when the plugin that
+     * defines them is disabled.
      */
     public function execute() {
         mtrace('Checking for activities to archive in selected course categories ...');
