@@ -17,11 +17,6 @@
 namespace archivingtrigger_cron;
 
 
-use local_archiving\activity_archiving_task;
-use local_archiving\archive_job;
-use local_archiving\type\archive_job_status;
-use local_archiving\type\cm_state_fingerprint;
-
 /**
  * Tests for the archivingtrigger_cron implementation.
  *
