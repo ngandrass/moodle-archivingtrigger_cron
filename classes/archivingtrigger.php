@@ -54,7 +54,7 @@ class archivingtrigger extends \local_archiving\driver\archivingtrigger {
             $courses = $cat->get_courses();
             foreach ($courses as $course) {
                 mtrace(" ↳ Course: {$course->get_formatted_name()} (ID: {$course->id})");
-                $cmsmeta = \local_archiving\util\mod_util::get_cms_with_metadata($course->id);
+                $cmsmeta = $this->get_course_cms_with_metadata($course->id);
 
                 foreach($cmsmeta as $cmmeta) {
                     $prettyname = "{$cmmeta->cm->name} (ID: {$cmmeta->cm->id})";
@@ -76,6 +76,20 @@ class archivingtrigger extends \local_archiving\driver\archivingtrigger {
         }
 
         return $res;
+    }
+
+    /**
+     * Retrieves all course modules of the given course with archiving subsystem
+     * metadata attached.
+     *
+     * Note: This is primarily here to allow mocking in unit tests.
+     *
+     * @param int $courseid ID of the course to get CMs for
+     * @return array List of course modules with metadata
+     * @throws \moodle_exception
+     */
+    protected function get_course_cms_with_metadata(int $courseid): array {
+        return \local_archiving\util\mod_util::get_cms_with_metadata($courseid);
     }
 
     /**
