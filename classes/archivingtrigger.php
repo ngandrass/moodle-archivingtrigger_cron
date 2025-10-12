@@ -26,8 +26,9 @@
 namespace archivingtrigger_cron;
 
 use core_course_category;
+use local_archiving\archive_job;
 
-// @codingStandardsIgnoreFile
+// phpcs:ignore
 defined('MOODLE_INTERNAL') || die(); // @codeCoverageIgnore
 
 
@@ -37,9 +38,10 @@ defined('MOODLE_INTERNAL') || die(); // @codeCoverageIgnore
 class archivingtrigger extends \local_archiving\driver\archivingtrigger {
 
     /**
-     * @param bool $includeunchanged
-     * @return array
-     * @throws \core\exception\moodle_exception
+     * Retrieves all course modules that should be archived
+     *
+     * @param bool $includeunchanged Whether to include unchanged activities as well
+     * @return array List of course modules with metadata
      * @throws \dml_exception
      * @throws \moodle_exception
      */
@@ -56,12 +58,16 @@ class archivingtrigger extends \local_archiving\driver\archivingtrigger {
                 mtrace(" ↳ Course: {$course->get_formatted_name()} (ID: {$course->id})");
                 $cmsmeta = $this->get_course_cms_with_metadata($course->id);
 
-                foreach($cmsmeta as $cmmeta) {
+                foreach ($cmsmeta as $cmmeta) {
                     $prettyname = "{$cmmeta->cm->name} (ID: {$cmmeta->cm->id})";
                     if ($cmmeta->supported && $cmmeta->enabled && $cmmeta->ready) {
                         if ($cmmeta->dirty) {
-                            mtrace("   ↳ ⏳ [ARCHIVE] {$prettyname}");
-                            $res[] = $cmmeta;
+                            if (archive_job::get_incomplete_job_count_for_context($cmmeta->cm->context)) {
+                                mtrace("   ↳ 🔃 [RUNNING] {$prettyname}");
+                            } else {
+                                mtrace("   ↳ ⏳ [ARCHIVE] {$prettyname}");
+                                $res[] = $cmmeta;
+                            }
                         } else if ($includeunchanged) {
                             mtrace("   ↳ ⚠️ [FORCE] {$prettyname}");
                             $res[] = $cmmeta;

@@ -104,6 +104,13 @@ final class archivingtrigger_test extends \advanced_testcase {
         $cmids = array_map(fn($cm) => (int) $cm->cm->id, $cms);
         $this->assertContains($archivingquiz1->cmid, $cmids, 'Expected Quiz 1 to be included.');
         $this->assertContains($archivingquiz2->cmid, $cmids, 'Expected Quiz 2 to be included.');
+
+        // Create archive job for Quiz 1 to simulate it being in progress and test that it is not selected again.
+        $triggermock->create_archive_job($cms[0]->cm);
+        ob_start();
+        $cms = $triggermock->get_cms_to_archive(includeunchanged: false);
+        ob_end_clean();
+        $this->assertCount(0, $cms, 'Expected no activities to be selected for archiving since Quiz 1 is in progress.');
     }
 
     /**
