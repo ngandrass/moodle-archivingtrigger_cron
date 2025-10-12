@@ -33,14 +33,16 @@ if ($hassiteconfig) {
     // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedIf
     if ($ADMIN->fulltree) {
         // Enabled.
-        $settings->add(new admin_setting_configcheckbox('archivingtrigger_cron/enabled',
+        $settings->add(new admin_setting_configcheckbox(
+            'archivingtrigger_cron/enabled',
             get_string('setting_enabled', 'archivingtrigger_cron'),
             get_string('setting_enabled_desc', 'archivingtrigger_cron'),
             '1'
         ));
 
         // Dryrun.
-        $settings->add(new admin_setting_configcheckbox('archivingtrigger_cron/dryrun',
+        $settings->add(new admin_setting_configcheckbox(
+            'archivingtrigger_cron/dryrun',
             get_string('setting_dryrun', 'archivingtrigger_cron'),
             get_string('setting_dryrun_desc', 'archivingtrigger_cron'),
             '0'
@@ -52,16 +54,18 @@ if ($hassiteconfig) {
             'action' => 'edit',
             'task' => 'archivingtrigger_cron\task\trigger_archiving',
         ]);
-        $settings->add(new admin_setting_description('archivingtrigger_cron/cronschedule',
+        $settings->add(new admin_setting_description(
+            'archivingtrigger_cron/cronschedule',
             get_string('setting_cronschedule', 'archivingtrigger_cron'),
-            get_string('setting_cronschedule_desc', 'archivingtrigger_cron', format_time($task->get_next_run_time() - time())).
-            '<br><a href="'.$crontaskconfigurl.'" class="btn btn-primary my-2" role="button">'.
-            get_string('setting_cronschedule_button', 'archivingtrigger_cron').
+            get_string('setting_cronschedule_desc', 'archivingtrigger_cron', format_time($task->get_next_run_time() - time())) .
+            '<br><a href="' . $crontaskconfigurl . '" class="btn btn-primary my-2" role="button">' .
+            get_string('setting_cronschedule_button', 'archivingtrigger_cron') .
             '</a>'
         ));
 
         // Archiving unchanged activities.
-        $settings->add(new admin_setting_configcheckbox('archivingtrigger_cron/archive_unchanged',
+        $settings->add(new admin_setting_configcheckbox(
+            'archivingtrigger_cron/archive_unchanged',
             get_string('setting_archive_unchanged', 'archivingtrigger_cron'),
             get_string('setting_archive_unchanged_desc', 'archivingtrigger_cron'),
             '0'

@@ -29,7 +29,6 @@ namespace archivingtrigger_cron;
  * Tests for the archivingtrigger_cron implementation.
  */
 final class archivingtrigger_test extends \advanced_testcase {
-
     /**
      * Tests selection of activities for automatic archiving based on their location and status
      *
@@ -59,7 +58,7 @@ final class archivingtrigger_test extends \advanced_testcase {
             ->onlyMethods(['get_course_cms_with_metadata'])
             ->getMock();
         $triggermock->method('get_course_cms_with_metadata')->willReturnCallback(
-            function($courseid) use ($archivingcourse, $archivingquiz1, $archivingquiz2) {
+            function ($courseid) use ($archivingcourse, $archivingquiz1, $archivingquiz2) {
                 if ($courseid != $archivingcourse->id) {
                     return [];
                 }
@@ -155,5 +154,4 @@ final class archivingtrigger_test extends \advanced_testcase {
             );
         }
     }
-
 }

@@ -32,7 +32,6 @@ defined('MOODLE_INTERNAL') || die(); // @codeCoverageIgnore
  * Scheduled task for triggering new activities to archive.
  */
 class trigger_archiving extends \core\task\scheduled_task {
-
     /**
      * Get a descriptive name for the task (shown to admins)
      *
@@ -95,5 +94,4 @@ class trigger_archiving extends \core\task\scheduled_task {
         }
         mtrace("Created {$createdjobsnum} archive job(s)");
     }
-
 }

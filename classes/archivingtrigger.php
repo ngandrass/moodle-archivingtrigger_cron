@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -36,7 +35,6 @@ defined('MOODLE_INTERNAL') || die(); // @codeCoverageIgnore
  * Cron-based archiving trigger plugin
  */
 class archivingtrigger extends \local_archiving\driver\archivingtrigger {
-
     /**
      * Retrieves all course modules that should be archived
      *
@@ -120,5 +118,4 @@ class archivingtrigger extends \local_archiving\driver\archivingtrigger {
         $job = \local_archiving\archive_job::create($cm->context, get_admin()->id, 'cron', $jobsettings);
         $job->enqueue();
     }
-
 }
