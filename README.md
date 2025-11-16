@@ -20,14 +20,16 @@ Cron-based automated archiving trigger plugin for the [Moodle archiving subsyste
 You can find more information about the archiving subsystem in the [official documentation](https://archiving.gandrass.de/).
 
 
-# WARNING: DO NOT USE THIS PLUGIN YET!
+## Features
 
-This plugin is currently under active development. Please do **not use this plugin in production environments** yet!
+- Automatically creates new archive jobs for activities that have unarchived changes
+- Activities are selected from within the globally configured archiving course categories
+- Archive jobs are created with the configured job presets (i.e., default values)
+- Time and frequency of archiving runs can be configured
+- Actions are logged on each check execution
 
-Once a stable version is released, this warning will be removed.
 
-
-# Installation
+## Installation
 
 Archiving triggers (`archivingtrigger`) are sub-plugins of the archiving subsystem core (`local_archiving`) and
 therefore require the core plugin to be installed. They then must be placed inside your Moodle directory under
